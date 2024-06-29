@@ -1,0 +1,6 @@
+public enum VRFPSDamageType
+{
+    DAMAGE_TYPE_AREA,
+    DAMAGE_TYPE_BULLET,
+    DAMAGE_TYPE_PROJECTILE,
+}

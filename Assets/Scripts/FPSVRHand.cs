@@ -32,6 +32,9 @@ public class FPSVRHand : MonoBehaviour
     [SerializeField] private float _freeMovementMoveSpeed = 6.0f;
     [SerializeField] private float _freeMovementAxisTrigger = 0.1f;
 
+    public bool preventMovementWhenDead = true;
+    public VRFPSHealthCharacter healthComponent;
+
     //locals
     private bool moveTeleporter;
     private bool moveTeleporterPending;
@@ -40,13 +43,16 @@ public class FPSVRHand : MonoBehaviour
 
     void MoveCharacter(Vector3 dir)
     {
-        if (_characterController != null) 
+        if (!preventMovementWhenDead || (healthComponent != null && healthComponent.health > 0))
         {
-            _characterController.Move(dir);
-        }
-        if(_rigidBody != null)
-        {
-            _rigidBody.AddForce(dir, ForceMode.Acceleration);
+            if (_characterController != null)
+            {
+                _characterController.Move(dir);
+            }
+            if (_rigidBody != null)
+            {
+                _rigidBody.MovePosition(_rigidBody.transform.position + dir);
+            }
         }
     }
 

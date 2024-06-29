@@ -14,6 +14,8 @@ public class FPSVRRig : MonoBehaviour
     [SerializeField] private bool updateCameraYPos = true;
     [SerializeField] private float updateCameraYPosHeightOffset = 0.0f;
     [SerializeField] private float playerSpeed = 1.0f;
+    [SerializeField] private VRFPSHealthCharacter healthComponent;
+    [SerializeField] private bool preventMovementWhenDead = true;
 
     private Vector3 lastPos;
 
@@ -36,21 +38,24 @@ public class FPSVRRig : MonoBehaviour
         if(lastPos.x != pos.x || lastPos.z != pos.z)
         {
             Vector3 moveDir = new Vector3((pos.x - lastPos.x) * playerSpeed, 0, (pos.z - lastPos.z) * playerSpeed);
-           
-            if(_characterController != null)
+
+            if (!preventMovementWhenDead || (healthComponent != null && healthComponent.health > 0))
             {
-                if (_characterController.isGrounded)
+                if (_characterController != null)
                 {
-                    _characterController.Move(moveDir);
+                    if (_characterController.isGrounded)
+                    {
+                        _characterController.Move(moveDir);
+                    }
+                    else
+                    {
+                        _characterController.SimpleMove(moveDir);
+                    }
                 }
-                else
+                if (_rigidBody != null)
                 {
-                    _characterController.SimpleMove(moveDir);
+                    _rigidBody.MovePosition(transform.position + moveDir);
                 }
-            }
-            if (_rigidBody != null)
-            {
-                _rigidBody.AddForce(moveDir, ForceMode.Acceleration);
             }
         }
         
